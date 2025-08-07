@@ -13,7 +13,7 @@ camera = None
 camera_lock = threading.Lock()
 
 # Cargar reconocedor
-recognizer = cv2.face.FaceRecognizer_create()
+recognizer = cv2.face.LBPHFaceRecognizer_create()
 if os.path.exists('recognizer/recognizer.yml'):
     recognizer.read('recognizer/recognizer.yml')
     print("[INFO] Modelo cargado")
@@ -133,9 +133,20 @@ def gen_frames():
     except Exception as e:
         print(f"Error en gen_frames: {e}")
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        # Aquí agregarías la lógica para guardar el usuario
+        # Por ejemplo, en la base de datos
+        
+        flash(f'Usuario {name} registrado exitosamente!', 'success')
+        return redirect(url_for('index'))
+    
+    return render_template('signup_form.html')
 
 @app.route('/video_feed')
 def video_feed():
