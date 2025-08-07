@@ -1,0 +1,153 @@
+<!-- tabla.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asistencia Ágil - Tabla</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #007BFF;
+      --primary-dark: #0056b3;
+      --bg-gradient: linear-gradient(to right, #e0eafc, #cfdef3);
+      --success-color: #28a745;
+      --error-color: #dc3545;
+      --font-main: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--bg-gradient);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 5vh 2rem;
+      min-height: 100vh;
+      color: #222;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      margin-bottom: 2rem;
+      font-weight: 800;
+    }
+
+    table {
+      width: 100%;
+      max-width: 900px;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    thead {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    th, td {
+      padding: 1rem 1.5rem;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f4f8ff;
+    }
+
+    tbody tr:hover {
+      background-color: #e9f1ff;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    .presente {
+      color: var(--success-color);
+      font-weight: 600;
+    }
+
+    .ausente {
+      color: var(--error-color);
+      font-weight: 600;
+    }
+
+    .buttons {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .button {
+      padding: 12px 28px;
+      font-size: 1rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      th, td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>Estado de Asistencia</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Estado</th>
+        <th>Hora de Reconocimiento</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for nombre, presente, hora in personas %}
+      <tr>
+        <td>{{ nombre }}</td>
+        <td class="{{ 'presente' if presente == 'presente' else 'ausente' }}">{{ presente }}</td>
+        <td>{{ hora if hora else '-' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="buttons">
+    <a class="button" href="{{ url_for('index') }}">Volver</a>
+    <a class="button" href="{{ url_for('descargar_excel') }}">Descargar Excel</a>
+  </div>
+</body>
+</html>
