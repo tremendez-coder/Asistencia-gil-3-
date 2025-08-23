@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Alumnos y Asistencia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Gestión de Alumnos y Asistencia</h1>
+        <div class="user-info">
+            {% if current_user.is_authenticated %}
+                <span>Bienvenido, {{ current_user.username }} ({{ current_user.rol | capitalize }})</span>
+                <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Iniciar Sesión</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {% if current_user.is_authenticated %}
+            <section id="alumnos-section">
+                <h2>Gestión de Alumnos</h2>
+                {% if current_user.rol == 'admin' %}
+                    <form id="alumno-form" class="form-container">
+                        <h3>Añadir Nuevo Alumno (Admin)</h3>
+                        <input type="hidden" id="alumno-id">
+                        <label for="nombre-alumno">Nombre:</label>
+                        <input type="text" id="nombre-alumno" required>
+                        <label for="apellido-alumno">Apellido:</label>
+                        <input type="text" id="apellido-alumno" required>
+                        <label for="curso-anio-alumno">Curso y Año:</label>
+                        <input type="text" id="curso-anio-alumno" placeholder="Ej: 1er año CB" required>
+                        <button type="submit">Guardar Alumno</button>
+                    </form>
+                {% endif %}
+
+                <h3>Listado de Alumnos</h3>
+                <table id="alumnos-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Nacimiento</th>
+                            <th>Curso/Año</th>
+                            <th>Orientación</th>
+                            <th class="acciones-col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos de alumnos se cargarán aquí -->
+                    </tbody>
+                </table>
+            </section>
+            
+            {% if current_user.rol == 'preceptor' %}
+                <section id="asistencias-section">
+                    <h2>Gestión de Asistencia</h2>
+                    <h3>Listado de Asistencias</h3>
+                    <table id="asistencias-table">
+                        <thead>
+                            <tr>
+                                <th>ID Asistencia</th>
+                                <th>ID Alumno</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Datos de asistencia se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </section>
+            {% endif %}
+
+
+            {% if current_user.rol == 'admin' %}
+            <section id="preceptores-section">
+                <h2>Gestión de Preceptores (Admin)</h2>
+                <form id="preceptor-form" class="form-container">
+                    <h3>Registrar/Editar Preceptor</h3>
+                    <input type="hidden" id="preceptor-id">
+                    <label for="username-preceptor">Usuario:</label>
+                    <input type="text" id="username-preceptor" required>
+                    <label for="password-preceptor">Contraseña (solo al crear/actualizar):</label>
+                    <input type="password" id="password-preceptor">
+                    <label for="cursos-a-cargo-preceptor">Cursos a Cargo (separados por coma, ej: 1er año CB,2do 1era IPP):</label>
+                    <input type="text" id="cursos-a-cargo-preceptor" placeholder="ej: 1er año CB,2do año CS - IPP">
+                    <button type="submit">Guardar Preceptor</button>
+                </form>
+
+                <h3>Listado de Preceptores</h3>
+                <table id="preceptores-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Rol</th>
+                            <th>Cursos a Cargo</th>
+                            <th class="acciones-col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos de preceptores se cargarán aquí -->
+                    </tbody>
+                </table>
+            </section>
+            {% endif %}
+
+            <section id="reconocimiento-facial-section">
+                <h2>Panel de Reconocimiento Facial</h2>
+                {% if current_user.rol == 'admin' %}
+                    <button onclick="entrenarReconocedor()">Entrenar Reconocedor</button>
+                    <p>Necesario después de capturar nuevos rostros o agregar nuevos alumnos.</p>
+                {% endif %}
+                {% if current_user.rol in ['admin', 'preceptor'] %}
+                    <button onclick="iniciarReconocimiento()">Iniciar Reconocimiento Facial</button>
+                    <p>Inicia la cámara para el reconocimiento facial en tiempo real.</p>
+                {% endif %}
+            </section>
+        {% else %}
+            <p>Por favor, <a href="{{ url_for('login') }}">inicia sesión</a> para acceder al sistema.</p>
+        {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
